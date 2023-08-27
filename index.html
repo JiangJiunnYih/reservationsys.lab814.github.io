@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<script>
+
+
+// Global variables
+var ss = SpreadsheetApp.openById("177oso6ygjC7R5CD6GxxVvly6sMDA9seBKdP4sdQze9U");
+var sheet = ss.getSheetByName("account");
+
+function doGet() {
+  return HtmlService.createHtmlOutputFromFile('index');
+}
+
+function addUser(username, password, email) {
+  sheet.appendRow([username, password, email]);
+}
+
+function checkCredentials(username, password) {
+  var data = sheet.getDataRange().getValues();
+  for (var i = 1; i < data.length; i++) { // Start from 1 to skip header row
+    if (data[i][0] === username && data[i][1] === password) {
+      return true; // Credentials are valid
+    }
+  }
+  return false; 
+}
+
+</script>
+
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>LAB 814 公用電腦使用預約系統</title>
+    <link rel="icon" type="image/x-icon" href="logo.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<h2>LAB 814 RESERVATION SYSTEM LOGIN</h2>
+  <base target="_top">
+  <style>
+    /* Reset some default styles */
+body, h1, h2, form, label, input {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #FAF0E6;
+  font-family: Arial, sans-serif;
+}
+
+h2 {
+  text-align: center;
+  margin-top: 20px;
+}
+
+form {
+  margin-top: 20px;
+  max-width: 400px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+input[type="button"] {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+input[type="button"]:hover {
+  background-color: #45a049;
+}
+
+/* Center the forms on the page */
+form {
+  margin: 0 auto;
+}
+
+/* Add a little spacing between forms */
+form + form {
+  margin-top: 30px;
+}
+</style>
+
+  <h2>會員註冊</h2>
+  <form id="registration-form">
+    <label for="username">使用者名稱:</label>
+    <input type="text" id="username" name="username" required><br><br>
+
+    <label for="password">密碼:</label>
+    <input type="password" id="password" name="password" required><br><br>
+
+    <label for="email">電子郵件 (Gmail only):</label>
+    <input type="email" id="email" name="email" required pattern="[a-z0-9._%+-]+@gmail\.com$"><br><br>
+
+    <input type="button" value="註冊" onclick="validateAndRegister()">
+  </form>
+  <br>
+  <h2>系統登入</h2>
+  <form id="login-form">
+    <label for="login-username">使用者名稱:</label>
+    <input type="text" id="login-username" name="login-username"><br><br>
+    <label for="login-password">密碼:</label>
+    <input type="password" id="login-password" name="login-password"><br><br>
+    <input type="button" value="登入系統" onclick="loginUser()">
+  </form>
+
+  <script>
+    function validateAndRegister() {
+    var username = document.getElementById("username").value;
+    var password = document.getElementById("password").value;
+    var email = document.getElementById("email").value;
+
+    if (!username || !password || !email) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+
+    if (!validateGmail(email)) {
+      alert("Please enter a valid Gmail address.");
+      return;
+    }
+    
+    google.script.run.addUser(username, password, email);
+    alert("User registered successfully!");
+  }
+
+  function validateGmail(email) {
+    var gmailRegex = /^[a-z0-9._%+-]+@gmail\.com$/i;
+    return gmailRegex.test(email);
+  }
+
+    function loginUser() {
+      var username = document.getElementById("login-username").value;
+      var password = document.getElementById("login-password").value;
+
+      google.script.run.withSuccessHandler(showLoginStatus).checkCredentials(username, password);
+    }
+
+    function showLoginStatus(isValid) {
+  if (isValid) {
+    alert("Login successful!");
+    window.location.replace("https://sites.google.com/view/lab814-com-reservation-sys/%E9%A6%96%E9%A0%81");
+  } else {
+    alert("Invalid username or password. Please try again.");
+  }
+}
+  </script>
+  
+  <script>
+      // Function to update the time and date on the page
+      function updateTime() {
+        // Get the current date and time
+        var now = new Date();
+
+        // Format the time as HH:MM:SS
+        var hours = now.getHours().toString().padStart(2, '0');
+        var minutes = now.getMinutes().toString().padStart(2, '0');
+        var seconds = now.getSeconds().toString().padStart(2, '0');
+        var timeString = hours + ':' + minutes + ':' + seconds;
+
+        // Format the date as YYYY-MM-DD
+        var year = now.getFullYear();
+        var month = (now.getMonth() + 1).toString().padStart(2, '0');
+        var day = now.getDate().toString().padStart(2, '0');
+        var dateString = year + '-' + month + '-' + day + '&nbsp;&nbsp;&nbsp;';
+
+        // Update the HTML element with the time and date
+        var dateTimeString = '當前時間: ' + dateString + timeString;
+        show = dateTimeString.fontsize(3)
+        document.getElementById('datetime').innerHTML = show;
+      }
+      setInterval(updateTime, 1000);
+    </script>
+
+<br><br><br><br>
+</body>
+<footer>
+<p>實驗室位址:&nbsp;&nbsp;&nbsp;新竹市東區大學路1001號 綜合一館 LAB 814</a></p>
+<p>碩一實驗室:&nbsp;&nbsp;&nbsp;新竹市東區大學路1001號 綜合一館 10 樓 統倉</p>
+<p>碩二實驗室:&nbsp;&nbsp;&nbsp;新竹市東區大學路1001號 綜合一館 11 樓 1101B</p>
+<p id="datetime"></p>
+<div style="text-align:center;"><h6><font face=@標楷體 size=2>Copyright © 2023 All Right Reserved</h6></div>
+</footer>
+</html>
